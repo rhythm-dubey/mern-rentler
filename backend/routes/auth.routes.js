@@ -3,7 +3,8 @@ import register from '../controllers/auth/register.controller.js';
 import login from '../controllers/auth/login.controller.js';
 import me from '../controllers/auth/me.controller.js';
 import logout from '../controllers/auth/logout.controller.js';
-import { loginValidator, registerValidator } from '../validators/auth.validator.js';
+import updateProfile from '../controllers/auth/profile.controller.js';
+import { loginValidator, registerValidator, updateProfileValidator } from '../validators/auth.validator.js';
 import { validate } from '../middleware/validation.middleware.js';
 import { protect } from '../middleware/auth.middleware.js';
 
@@ -13,5 +14,7 @@ router.post('/auth/register', registerValidator, validate, register);
 router.post('/auth/login', loginValidator, validate, login);
 router.get('/auth/me', protect, me);
 router.post('/auth/logout', protect, logout);
+router.put('/auth/profile', protect, updateProfileValidator, validate, updateProfile);
+router.patch('/auth/profile', protect, updateProfileValidator, validate, updateProfile);
 
 export default router;

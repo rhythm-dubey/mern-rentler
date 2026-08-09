@@ -22,4 +22,22 @@ export const loginValidator = [
         .notEmpty().withMessage('Password is required.')
         .isLength({min: 8}).withMessage('Password must be at least 8 characters'),
 
-]
+];
+
+export const updateProfileValidator = [
+    body()
+        .custom((_, { req }) => {
+            if (req.body.name === undefined && req.body.email === undefined) {
+                throw new Error('At least one of name or email is required.');
+            }
+            return true;
+        }),
+
+    body('name')
+        .optional()
+        .notEmpty().withMessage('Name is required.'),
+
+    body('email')
+        .optional()
+        .isEmail().withMessage('Please enter valid email'),
+];
