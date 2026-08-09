@@ -26,6 +26,12 @@ const userSchema = new mongoose.Schema({
             "renter"
         ],
         default: "renter"
+    },
+    resetPasswordToken: {
+        type: String
+    },
+    resetPasswordExpire: {
+        type: Date
     }
 }, {
     timestamps: true

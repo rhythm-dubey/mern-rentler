@@ -57,3 +57,9 @@ export const changePasswordValidator = [
             return true;
         }),
 ];
+
+export const forgotPasswordValidator = [
+    body('email')
+        .notEmpty().withMessage('e-mail is required.')
+        .isEmail().withMessage('Please enter valid email'),
+];
