@@ -40,3 +40,10 @@ export const protect = async (req, res, next) => {
         return sendError(res, 401, 'Not authorized, token failed');
     }
 };
+
+export const authorize = (...roles) => (req, res, next) => {
+    if (!req.user || !roles.includes(req.user.role)) {
+        return sendError(res, 403, 'Not authorized for this action');
+    }
+    next();
+};
