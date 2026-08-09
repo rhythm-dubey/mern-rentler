@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import User from '../.././models/user.model.js';
 import jwt from 'jsonwebtoken';
+import {sendSuccess, sendError} from '../.././utils/apiResponse.js';
 
 const register = async (req, res) => {
     try {
@@ -9,10 +10,7 @@ const register = async (req, res) => {
         const existingUser = await User.findOne({ email });
 
         if (existingUser) {
-            return res.status(409).json({
-                    success: false,
-                    message: "Email already registered"
-                });
+            return sendError(res, 409, `Email already registered`);
         }
 
         const user = await User.create({
@@ -27,9 +25,7 @@ const register = async (req, res) => {
             {expiresIn: process.env.JWT_EXPIRES_IN}
         );
 
-        res.status(201).json({
-            success: true,
-            message: "User registered successfully",
+        return sendSuccess(res, 200, "User registered successfully", {
             token,
             user: {
                 id: user._id,
@@ -40,10 +36,7 @@ const register = async (req, res) => {
         });
 
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
+        return sendError(res, 500, error.message);
     }
 };
 

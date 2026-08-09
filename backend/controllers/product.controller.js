@@ -1,21 +1,14 @@
 import mongoose from 'mongoose';
 import Product from '.././models/product.model.js';
+import { sendSuccess, sendError } from '../utils/apiResponse.js';
 
 export const get = async (req, res) => {
 	try { 
 		const products = await Product.find({});
-		res.status(200)
-			.json({
-				success: true,
-				data: products
-			});
+		return sendSuccess(res, 200, "Products fetched", { data: products });
 	} catch (error) {
 		console.error('Products get Error;', error.message);
-		res.status(500)
-			.json({
-				success: false,
-				message: "Server error"
-			});
+		return sendError(res, 500, "Server error");
 	}
 };
 
@@ -24,27 +17,15 @@ export const update = async (req, res) => {
 	const product = req.body;
 
 	if (! mongoose.Types.ObjectId.isValid(id)) {
-		res.status(404)
-			.json({
-				success: false,
-				message: "product not found"
-			});
+		return sendError(res, 404, "product not found");
 	}
 
 	try {
 		const updatedProduct = await Product.findByIdAndUpdate(id, product, {new: true});
-		res.status(200)
-			.json({
-				success: true,
-				data: updatedProduct
-			});
+		return sendSuccess(res, 200, "Product updated", { data: updatedProduct });
 	} catch(error) {
 		console.error(`Products put Error; ${error.message}`);
-		res.status(500)
-			.json({
-				success: false,
-				message: "Server error"
-			});
+		return sendError(res, 500, "Server error");
 	}
 };
 
@@ -52,29 +33,17 @@ export const create = async (req, res) => {
 	const product = req.body;
 
 	if (!product.name || !product.price || !product.image) {
-		return res.status(400)
-			.json({
-				success: false,
-				message: 'Please provide all details'
-			})
+		return sendError(res, 400, 'Please provide all details');
 	}
 
 	const newProduct = new Product(product);
 
 	try {
 		await newProduct.save();
-		res.status(201)
-			.json({
-				success: true,
-				data: newProduct
-			});
+		return sendSuccess(res, 201, "Product created", { data: newProduct });
 	} catch(error) {
 		console.error(`Products Post Error; ${error.message}`);
-		res.status(500)
-			.json({
-				success: false,
-				message: "Server error"
-			});
+		return sendError(res, 500, "Server error");
 	}
 };
 
@@ -83,17 +52,9 @@ export const destroy = async(req, res) => {
 
 	try {
 		await Product.findByIdAndDelete(id);
-		res.status(200)
-			.json({
-				success: true,
-				message: "Product deleted."
-			});
+		return sendSuccess(res, 200, "Product deleted.");
 	} catch(error) {
 		console.error(`Products Delete Error; ${error.message}`);
-		res.status(404)
-			.json({
-				success: false,
-				message: "product not found"
-			});
+		return sendError(res, 404, "product not found");
 	}
 };

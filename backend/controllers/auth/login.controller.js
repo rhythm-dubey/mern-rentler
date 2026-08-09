@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import User from '../.././models/user.model.js';
 import jwt from 'jsonwebtoken';
+import {sendSuccess, sendError} from '../.././utils/apiResponse.js';
 
 const login = async (req, res) => {
     try {
@@ -8,10 +9,7 @@ const login = async (req, res) => {
         const existingUser = await User.findOne({ email });
 
         if (!existingUser) {
-            return res.status(409).json({
-                    success: false,
-                    message: "User not found"
-                });
+            return sendError(res, 409, `User not found`);
         }
 
         const isPasswordCorrect = await existingUser.matchPassword(password);
@@ -24,9 +22,7 @@ const login = async (req, res) => {
                 {expiresIn: process.env.JWT_EXPIRES_IN}
             );
 
-            res.status(201).json({
-                success: true,
-                message: "User authenticated successfully",
+            return sendSuccess(res, 200, "User authenticated successfully", {
                 token,
                 user: {
                     id: existingUser._id,
@@ -37,17 +33,11 @@ const login = async (req, res) => {
             });
             
         } else {
-            res.status(201).json({
-                success: false,
-                message: "Password doesnt match"
-            });
+            return sendError(res, 201, `Password doesnt match`);
         }
 
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
+        return sendError(res, 500, error.message);
     }
 }
 
